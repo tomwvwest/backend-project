@@ -59,9 +59,9 @@ describe("GET /api", () => {
       .get("/api")
       .then((response) => {
         const apis = response.body.apis;
-        expect(typeof JSON.parse(apis)).toBe('object')
+        expect(typeof JSON.parse(apis)).toBe("object");
       });
-  })
+  });
   test("each value in parent object is a nested object containing the correct keys and value data types", () => {
     return request(app)
       .get("/api")
@@ -77,5 +77,41 @@ describe("GET /api", () => {
         }
       });
   });
+});
 
+describe("GET /api/articles/:article_id", () => {
+  test("200: responds with status code 200 with valid request", () => {
+    return request(app).get("/api/articles/1").expect(200);
+  });
+  test("returns an object of a specific article to the client", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .then((response) => {
+        const article = response.body.article;
+        expect(typeof article.author).toBe("string");
+        expect(typeof article.title).toBe("string");
+        expect(typeof article.article_id).toBe("number");
+        expect(typeof article.body).toBe("string");
+        expect(typeof article.topic).toBe("string");
+        expect(typeof article.created_at).toBe("string");
+        expect(typeof article.votes).toBe("number");
+        expect(typeof article.article_img_url).toBe("string");
+      });
+  });
+  test("404: responds with status 404 and appropriate message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/1000")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/invalid_id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
 });
