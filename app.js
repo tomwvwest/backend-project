@@ -7,7 +7,7 @@ app.use(express.json());
 app.get('/api/topics', getTopics)
 
 //err handling
-app.use((req, res, next) => {
+app.all('*', (req, res, next) => {
   if(!req.status){
     res.status(404).send({msg: 'Route Not Found'})
   }

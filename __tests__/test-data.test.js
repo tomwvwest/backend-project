@@ -14,7 +14,13 @@ afterAll(() => {
 
 describe("General errors", () => {
   test("404: responds with status code 404  with appropriate message when given a unavailable route", () => {
-    return request(app).get("/api/trea").expect(404);
+    request(app)
+      .get("/api/bad-route")
+      .expect(404)
+      .then((response) => {
+        const errorMessage = response._body.msg;
+        expect(errorMessage).toBe("Route Not Found");
+      });
   });
 });
 
@@ -26,7 +32,7 @@ describe("GET /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .then((response) => {
-        const rows = response._body.topics.rows;
+        const rows = response._body.topics;
         expect(rows.length).toBe(3);
         expect(Array.isArray(rows)).toBe(true);
       });
@@ -35,7 +41,7 @@ describe("GET /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .then((response) => {
-        const rows = response._body.topics.rows;
+        const rows = response._body.topics;
         expect(
           rows.every((item) => {
             return (
@@ -47,16 +53,15 @@ describe("GET /api/topics", () => {
         ).toBe(true);
       });
   });
-  test("each object in array contains keys of 'slug' and 'description", () => {
+  test("each object in array contains keys of 'slug' and 'description' with correct data type values", () => {
     return request(app)
       .get("/api/topics")
       .then((response) => {
-        const rows = response._body.topics.rows;
-        expect(
-          rows.every((obj) => {
-            return obj.slug && obj.description;
-          })
-        ).toBe(true);
+        const rows = response._body.topics;
+        rows.forEach((topic) => {
+          expect(typeof topic.slug).toBe("string");
+          expect(typeof topic.description).toBe("string");
+        });
       });
   });
 });
