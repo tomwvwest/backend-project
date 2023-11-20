@@ -1,7 +1,13 @@
-const { getTopicsData } = require("../models/topics.model");
+const { getTopicsData, getEndpointsData } = require("../models/topics.model");
+
+exports.getEndpoints = (req, res, next) => {
+  getEndpointsData().then((data) => {
+    res.status(200).send({apis: JSON.stringify(data)});
+  });
+};
 
 exports.getTopics = (req, res, next) => {
   getTopicsData().then((data) => {
-    res.status(200).send({topics: data});
+    res.status(200).send({ topics: data });
   });
 };

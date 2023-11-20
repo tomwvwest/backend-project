@@ -49,3 +49,33 @@ describe("GET /api/topics", () => {
       });
   });
 });
+
+describe("GET /api", () => {
+  test("200: responds with status code 200", () => {
+    return request(app).get("/api").expect(200);
+  });
+  test("returns a JSON Object", () => {
+    return request(app)
+      .get("/api")
+      .then((response) => {
+        const apis = response.body.apis;
+        expect(typeof JSON.parse(apis)).toBe('object')
+      });
+  })
+  test("each value in parent object is a nested object containing the correct keys and value data types", () => {
+    return request(app)
+      .get("/api")
+      .then((response) => {
+        const apis = response.body.apis;
+        const parsedApis = JSON.parse(apis);
+        for (const api in parsedApis) {
+          const specificApi = parsedApis[api];
+          expect(typeof specificApi.description).toBe("string");
+          expect(specificApi.queries).toBeInstanceOf(Array);
+          expect(typeof specificApi.description).toBe("string");
+          expect(!specificApi.exampleResponse).toBe(false);
+        }
+      });
+  });
+
+});
