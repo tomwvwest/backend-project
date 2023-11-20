@@ -18,7 +18,7 @@ describe("General errors", () => {
       .get("/api/bad-route")
       .expect(404)
       .then((response) => {
-        const errorMessage = response._body.msg;
+        const errorMessage = response.body.msg;
         expect(errorMessage).toBe("Route Not Found");
       });
   });
@@ -32,32 +32,16 @@ describe("GET /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .then((response) => {
-        const rows = response._body.topics;
+        const rows = response.body.topics;
         expect(rows.length).toBe(3);
         expect(Array.isArray(rows)).toBe(true);
       });
   });
-  test("each item in array is an object", () => {
+  test("each item in array is an object that contains keys of 'slug' and 'description' with correct data type values", () => {
     return request(app)
       .get("/api/topics")
       .then((response) => {
-        const rows = response._body.topics;
-        expect(
-          rows.every((item) => {
-            return (
-              typeof item === "object" &&
-              !Array.isArray(item) &&
-              typeof item !== "function"
-            );
-          })
-        ).toBe(true);
-      });
-  });
-  test("each object in array contains keys of 'slug' and 'description' with correct data type values", () => {
-    return request(app)
-      .get("/api/topics")
-      .then((response) => {
-        const rows = response._body.topics;
+        const rows = response.body.topics;
         rows.forEach((topic) => {
           expect(typeof topic.slug).toBe("string");
           expect(typeof topic.description).toBe("string");

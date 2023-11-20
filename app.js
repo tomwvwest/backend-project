@@ -8,9 +8,7 @@ app.get('/api/topics', getTopics)
 
 //err handling
 app.all('*', (req, res, next) => {
-  if(!req.status){
     res.status(404).send({msg: 'Route Not Found'})
-  }
 })
 
 module.exports = app;
