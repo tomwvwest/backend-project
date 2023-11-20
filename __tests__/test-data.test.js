@@ -13,28 +13,29 @@ afterAll(() => {
 });
 
 describe("General errors", () => {
-  test('500: responds with status code 500  with appropriate message when given a unavailable route', () => {
-    return request(app).get("/api/trea").expect(500);
-  })
-})
+  test("404: responds with status code 404  with appropriate message when given a unavailable route", () => {
+    return request(app).get("/api/trea").expect(404);
+  });
+});
 
 describe("GET /api/topics", () => {
   test("200: responds with status code 200 with valid request", () => {
     return request(app).get("/api/topics").expect(200);
   });
-  test("returns an array", () => {
+  test("returns an array that is not empty", () => {
     return request(app)
       .get("/api/topics")
-      .then(({ _body }) => {
-        const rows = _body.rows;
+      .then((response) => {
+        const rows = response._body.topics.rows;
+        expect(rows.length).toBe(3);
         expect(Array.isArray(rows)).toBe(true);
       });
   });
   test("each item in array is an object", () => {
     return request(app)
       .get("/api/topics")
-      .then(({ _body }) => {
-        const rows = _body.rows;
+      .then((response) => {
+        const rows = response._body.topics.rows;
         expect(
           rows.every((item) => {
             return (
@@ -49,8 +50,8 @@ describe("GET /api/topics", () => {
   test("each object in array contains keys of 'slug' and 'description", () => {
     return request(app)
       .get("/api/topics")
-      .then(({ _body }) => {
-        const rows = _body.rows;
+      .then((response) => {
+        const rows = response._body.topics.rows;
         expect(
           rows.every((obj) => {
             return obj.slug && obj.description;

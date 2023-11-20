@@ -9,7 +9,7 @@ app.get('/api/topics', getTopics)
 //err handling
 app.use((req, res, next) => {
   if(!req.status){
-    res.status(500).send({msg: 'Internal Server Error'})
+    res.status(404).send({msg: 'Route Not Found'})
   }
 })
 
