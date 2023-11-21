@@ -8,6 +8,8 @@ app.get("/api", getEndpoints)
 
 app.get("/api/topics", getTopics);
 
+app.get("/api/articles", )
+
 //err handling
 app.all("*", (req, res, next) => {
   res.status(404).send({ msg: "Route Not Found" });
