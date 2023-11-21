@@ -28,7 +28,7 @@ exports.checkExists = async (table, column, value) => {
   const query = format("SELECT * FROM %I WHERE %I = $1", table, column);
   const dbOutput = await db.query(query, [value]);
 
-  if (dbOutput.rows.length === 0) {
+  if (dbOutput.rows.length === 0 || !dbOutput.rows.length) {
     return Promise.reject({ status: 404, msg: `Could not find in ${table}` });
   } 
    return [] 

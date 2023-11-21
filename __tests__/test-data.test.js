@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
+const { toBeSortedBy } = require('jest-sorted');
 
 beforeEach(() => {
   return seed(data);
@@ -135,12 +136,10 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-  test("200: responds with status code 200 with valid request", () => {
-    return request(app).get("/api/articles/1/comments").expect(200);
-  });
-  test("returns array of correct length filled with objects containing the correct properties", () => {
+  test("200: returns array of correct length filled with objects containing the correct properties", () => {
     return request(app)
       .get("/api/articles/1/comments")
+      .expect(200)
       .then(({ body }) => {
         const comments = body.comments;
         expect(comments.length).toBe(11);
@@ -150,7 +149,7 @@ describe("GET /api/articles/:article_id/comments", () => {
           expect(typeof comment.created_at).toBe("string");
           expect(typeof comment.author).toBe("string");
           expect(typeof comment.body).toBe("string");
-          expect(typeof comment.article_id).toBe("number");
+          expect(comment.article_id).toBe(1);
         });
       });
   });
@@ -159,12 +158,9 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .then(({ body }) => {
         const comments = body.comments;
-        const sortedComments = [...comments].sort((a, b) => {
-          const aTimestamp = new Date(a.created_at).getTime();
-          const bTimestamp = new Date(b.created_at).getTime();
-          return bTimestamp - aTimestamp;
-        });
-        expect(comments).toEqual(sortedComments);
+        expect(comments).toBeSortedBy('created_at', {
+          descending: true
+        })
       });
   });
   test("200: returns an empty array if a valid article_id is requested but no comments are present", () => {
