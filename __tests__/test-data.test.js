@@ -79,4 +79,17 @@ describe("GET /api", () => {
   });
 });
 
-
+describe("GET /api/articles", () => {
+  test("200: responds with status code 200", () => {
+    return request(app).get("/api/articles").expect(200);
+  });
+  test("returns an array of article objects with correct properties to client", () => {
+    
+  })
+  test("objects are sorted by date in descending order", () => {
+    
+  });
+  test("", () => {
+    
+  });
+});
