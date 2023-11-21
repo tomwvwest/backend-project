@@ -13,3 +13,12 @@ exports.getTopicsData = () => {
     return results.rows;
   });
 };
+
+exports.getArticleDataById = (id) => {
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1", [id])
+    .then((result) => {
+      if (result.rows[0]) return result.rows[0];
+      return Promise.reject({ status: 404, msg: 'article does not exist' });
+    });
+};

@@ -92,8 +92,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
             article_img_url,
           }) => [title, topic, author, body, created_at, votes, article_img_url]
         )
-      );
-
+        );
       return db.query(insertArticlesQueryStr);
     })
     .then(({ rows: articleRows }) => {
