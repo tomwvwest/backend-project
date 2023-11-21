@@ -2,6 +2,7 @@ const {
   getTopicsData,
   getEndpointsData,
   getArticlesData,
+  getArticleDataById,
 } = require("../models/topics.model");
 
 exports.getEndpoints = (req, res, next) => {
@@ -21,3 +22,12 @@ exports.getArticles = (req, res, next) => {
     res.status(200).send({articles: data});
   });
 };
+exports.getArticlesById = (req, res, next) => {
+  const id = req.params.article_id;
+  getArticleDataById(id)
+    .then((result) => {
+      res.status(200).send({ article: result });
+    })
+    .catch(next);
+};
+

@@ -60,6 +60,7 @@ describe("GET /api", () => {
       .then((response) => {
         const apis = response.body.apis;
         expect(typeof JSON.parse(apis)).toBe("object");
+        expect(typeof JSON.parse(apis)).toBe("object");
       });
   });
   test("each value in parent object is a nested object containing the correct keys and value data types", () => {
@@ -75,6 +76,61 @@ describe("GET /api", () => {
           expect(typeof specificApi.description).toBe("string");
           expect(!specificApi.exampleResponse).toBe(false);
         }
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id", () => {
+  test("200: responds with status code 200 with valid request", () => {
+    return request(app).get("/api/articles/1").expect(200);
+  });
+  test("returns an object with correct property data types to the client", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .then((response) => {
+        const article = response.body.article;
+        expect(typeof article.author).toBe("string");
+        expect(typeof article.title).toBe("string");
+        expect(typeof article.body).toBe("string");
+        expect(typeof article.topic).toBe("string");
+        expect(typeof article.created_at).toBe("string");
+        expect(typeof article.votes).toBe("number");
+        expect(typeof article.article_img_url).toBe("string");
+      });
+  });
+  test("returns correct object to the client", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .then((response) => {
+        const article = response.body.article;
+        const dateCreatedtoLocalTime = new Date(1594329060000 - 60 * 60 * 1000);
+
+        expect((article.created_at)).toBe(dateCreatedtoLocalTime.toISOString());
+        expect(article.article_id).toBe(1);
+        expect(article.author).toBe("butter_bridge");
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.body).toBe("I find this existence challenging");
+        expect(article.topic).toBe("mitch");
+        expect(article.votes).toBe(100);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+  test("404: responds with status 404 and appropriate message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/1000")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/invalid_id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
       });
   });
 });
@@ -120,7 +176,7 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const articles = body.articles;
         articles.forEach((obj) => {
-          expect(obj).not.toHaveProperty('body');
+          expect(obj).not.toHaveProperty("body");
         });
       });
   });
