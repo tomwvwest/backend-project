@@ -59,9 +59,9 @@ describe("GET /api", () => {
       .get("/api")
       .then((response) => {
         const apis = response.body.apis;
-        expect(typeof JSON.parse(apis)).toBe('object')
+        expect(typeof JSON.parse(apis)).toBe("object");
       });
-  })
+  });
   test("each value in parent object is a nested object containing the correct keys and value data types", () => {
     return request(app)
       .get("/api")
@@ -83,13 +83,43 @@ describe("GET /api/articles", () => {
   test("200: responds with status code 200", () => {
     return request(app).get("/api/articles").expect(200);
   });
-  test("returns an array of article objects with correct properties to client", () => {
-    
-  })
-  test("objects are sorted by date in descending order", () => {
-    
+  test("returns an array of correct length filled with article objects with correct properties to the client", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(Array.isArray(articles)).toBe(true);
+        articles.forEach((item) => {
+          expect(typeof item.author).toBe("string");
+          expect(typeof item.title).toBe("string");
+          expect(typeof item.article_id).toBe("number");
+          expect(typeof item.topic).toBe("string");
+          expect(typeof item.created_at).toBe("string");
+          expect(typeof item.votes).toBe("number");
+          expect(typeof item.article_img_url).toBe("string");
+          expect(typeof item.comment_count).toBe("number");
+        });
+      });
   });
-  test("", () => {
-    
+  test("objects are sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        const articles = body.articles;
+        const sortedArticles = [...articles].sort((a, b) => {
+          return b.created_at - a.created_at;
+        });
+        expect(articles).toEqual(sortedArticles)
+      });
+  });
+  test("no object in array carry the body property", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        const articles = body.articles;
+        articles.forEach(obj => {
+          expect(!obj.body).toBe(true)
+        })
+      });
   });
 });

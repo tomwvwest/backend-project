@@ -1,4 +1,8 @@
-const { getTopicsData, getEndpointsData } = require("../models/topics.model");
+const {
+  getTopicsData,
+  getEndpointsData,
+  getArticlesData,
+} = require("../models/topics.model");
 
 exports.getEndpoints = (req, res, next) => {
   getEndpointsData().then((data) => {
@@ -13,5 +17,7 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  res.status(200).send()
+  getArticlesData().then((data) => {
+    res.status(200).send({articles: data});
+  });
 };
