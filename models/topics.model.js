@@ -15,15 +15,20 @@ exports.getTopicsData = () => {
 };
 
 exports.getArticlesData = () => {
-  // db.query('SELECT article_id')
-  return db.query("SELECT * FROM articles").then(result => {
-    const arrOfArticles = result.rows;
-    arrOfArticles.forEach(obj => {
+  return Promise.all([
+    db.query("SELECT article_id FROM comments"),
+    db.query("SELECT * FROM articles ORDER BY created_at DESC"),
+  ]).then(([arrOfArticleAppearances, arrOfArticles]) => {
+    const formattedArticleAppearances = arrOfArticleAppearances.rows.map(
+      (obj) => obj.article_id
+    );
+    const arrOfArticlesRows = arrOfArticles.rows;
+    arrOfArticlesRows.forEach((obj) => {
       delete obj.body;
-
-      //const id = obj.article_id
-      
-    })
-    return arrOfArticles
-  }) 
-}
+      obj.comment_count = formattedArticleAppearances.filter(
+        (num) => num === obj.article_id
+      ).length;
+    });
+    return arrOfArticlesRows;
+  });
+};
