@@ -15,13 +15,13 @@ exports.getTopicsData = () => {
 };
 
 exports.getArticlesData = () => {
-  db.query('SELECT article_id')
+  // db.query('SELECT article_id')
   return db.query("SELECT * FROM articles").then(result => {
     const arrOfArticles = result.rows;
     arrOfArticles.forEach(obj => {
       delete obj.body;
 
-      const id = obj.article_id
+      //const id = obj.article_id
       
     })
     return arrOfArticles
