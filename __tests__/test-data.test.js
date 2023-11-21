@@ -120,7 +120,7 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         const articles = body.articles;
         articles.forEach((obj) => {
-          expect(!obj.body).toBe(true);
+          expect(obj).not.toHaveProperty('body');
         });
       });
   });
