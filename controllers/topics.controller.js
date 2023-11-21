@@ -1,7 +1,9 @@
+const { checkArticleExists } = require("../db/seeds/utils");
 const {
   getTopicsData,
   getEndpointsData,
   getArticleDataById,
+  getCommentsDataByArticleId,
 } = require("../models/topics.model");
 
 exports.getEndpoints = (req, res, next) => {
@@ -25,3 +27,11 @@ exports.getArticlesById = (req, res, next) => {
     .catch(next);
 };
 
+exports.getCommentsByArticleId = (req, res, next) => {
+  const id = req.params.article_id;
+  getCommentsDataByArticleId(id)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};

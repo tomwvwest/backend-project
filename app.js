@@ -3,6 +3,7 @@ const {
   getTopics,
   getEndpoints,
   getArticlesById,
+  getCommentsByArticleId,
 } = require("./controllers/topics.controller");
 const app = express();
 
@@ -14,6 +15,8 @@ app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticlesById);
 
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
 //err handling
 app.all("*", (req, res, next) => {
   res.status(404).send({ msg: "Route Not Found" });
@@ -22,7 +25,7 @@ app.all("*", (req, res, next) => {
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) res.status(err.status).send({ msg: err.msg });
-  next(err)
+  next(err);
 });
 
 app.use((err, req, res, next) => {
