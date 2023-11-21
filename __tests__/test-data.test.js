@@ -102,9 +102,9 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .then((response) => {
         const article = response.body.article;
-        const dateCreatedtoLocalTime = new Date(1594329060000 - (60*60*1000));
+        const dateCreatedtoLocalTime = new Date(1594329060000 - 60 * 60 * 1000);
 
-        expect((article.created_at)).toBe(dateCreatedtoLocalTime.toISOString());
+        expect(article.created_at).toBe(dateCreatedtoLocalTime.toISOString());
         expect(article.article_id).toBe(1);
         expect(article.author).toBe("butter_bridge");
         expect(article.title).toBe("Living in the shadow of a great man");
@@ -127,6 +127,39 @@ describe("GET /api/articles/:article_id", () => {
   test("400: responds with status 400 and appropriate message when given an invalid id", () => {
     return request(app)
       .get("/api/articles/invalid_id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+xdescribe("GET /api/articles/:article_id/comments", () => {
+  test("200: responds with status code 200 with valid request", () => {
+    return request(app).get("/api/articles/1/comments").expect(200);
+  });
+  test("returns array of correct length filled with objects containing the correct properties", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .then(({ body }) => {
+        const comments = body.comments;
+        expect(comments.length).toBe(11);
+        
+      });
+  });
+  test("array is ordered by most recent first", () => {});
+  test("returns an empty array if a valid article_id is requested but no comments are present", () => {});
+  test("404: responds with status 404 and appropriate message when given a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/1000/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given an invalid id", () => {
+    return request(app)
+      .get("/api/articles/invalid_id/comments")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
