@@ -22,9 +22,6 @@ exports.getArticlesById = (req, res, next) => {
     .then((result) => {
       res.status(200).send({ article: result });
     })
-    .catch((err) => {
-      if (err.code) return next({ code: err.code });
-      return next({ status: 404, msg: "article does not exist" });
-    });
+    .catch(next);
 };
 
