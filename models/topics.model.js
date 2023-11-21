@@ -19,10 +19,6 @@ exports.getArticleDataById = (id) => {
     .query("SELECT * FROM articles WHERE article_id = $1", [id])
     .then((result) => {
       if (result.rows[0]) return result.rows[0];
-      return Promise.reject();
-    })
-    .catch((err) => {
-      if (err) return Promise.reject({ code: err.code });
-      return Promise.reject({ status: 404, msg: "article does not exist" });
+      return Promise.reject({ err: result });
     });
 };
