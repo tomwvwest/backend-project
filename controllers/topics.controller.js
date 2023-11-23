@@ -5,6 +5,7 @@ const {
   getArticlesData,
   getArticleDataById,
   getCommentsDataByArticleId,
+  addCommentToArticle,
 } = require("../models/topics.model");
 
 exports.getEndpoints = (req, res, next) => {
@@ -21,7 +22,7 @@ exports.getTopics = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   getArticlesData().then((data) => {
-    res.status(200).send({articles: data});
+    res.status(200).send({ articles: data });
   });
 };
 exports.getArticlesById = (req, res, next) => {
@@ -42,8 +43,18 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
   Promise.all(articlePromises)
     .then((results) => {
-      const comments = results[0]
+      const comments = results[0];
       res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.postCommentByArticleId = (req, res, next) => {
+  const id = req.params.article_id;
+  addCommentToArticle(id, req.body)
+    .then(({ rows }) => {
+      const comment = rows[0]
+      res.status(201).send({ comment });
     })
     .catch(next);
 };

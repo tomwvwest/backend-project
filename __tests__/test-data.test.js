@@ -3,7 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
-const { toBeSortedBy } = require('jest-sorted');
+const { toBeSortedBy } = require("jest-sorted");
 
 beforeEach(() => {
   return seed(data);
@@ -104,7 +104,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .then((response) => {
         const article = response.body.article;
-        const dateCreatedtoLocalTime = new Date(1594329060000 - (60*60*1000));
+        const dateCreatedtoLocalTime = new Date(1594329060000 - 60 * 60 * 1000);
 
         expect(article.created_at).toBe(dateCreatedtoLocalTime.toISOString());
         expect(article.article_id).toBe(1);
@@ -206,9 +206,9 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .then(({ body }) => {
         const comments = body.comments;
-        expect(comments).toBeSortedBy('created_at', {
-          descending: true
-        })
+        expect(comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
       });
   });
   test("200: returns an empty array if a valid article_id is requested but no comments are present", () => {
@@ -231,6 +231,79 @@ describe("GET /api/articles/:article_id/comments", () => {
   test("400: responds with status 400 and appropriate message when given an invalid id", () => {
     return request(app)
       .get("/api/articles/invalid_id/comments")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: inserts new comment to the db and sends comment back to client, for when the user already exists", () => {
+    const newComment = { username: "butter_bridge", body: "great article" };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const comment = body.comment;
+        expect(comment.comment_id).toBe(19);
+        expect(comment.article_id).toBe(2);
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("great article");
+        expect(
+          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(
+            comment.created_at
+          )
+        ).toBe(true);
+        expect(comment.votes).toBe(0);
+      });
+  });
+  test("404: responds with status 404 and appropriate message when given a valid but non-existent id", () => {
+    const newComment = { username: "butter_bridge", body: "great article" };
+    return request(app)
+      .post("/api/articles/1000/comments")
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given an invalid id", () => {
+    const newComment = { username: "butter_bridge", body: "great article" };
+    return request(app)
+      .post("/api/articles/invalid_id/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given only a username", () => {
+    const newComment = { username: "butter_bridge" };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given only a comment", () => {
+    const newComment = { body: "great article" };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given a body containnig more than a username and comment", () => {
+    const newComment = { username: 'butter_bridge', body: "great article", hello: 'yes' };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");

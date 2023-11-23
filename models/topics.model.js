@@ -23,17 +23,6 @@ exports.getArticleDataById = (id) => {
     });
 };
 
-exports.getCommentsDataByArticleId = (id) => {
-  return db
-    .query(
-      "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC",
-      [id]
-    )
-    .then(({rows}) => {
-      return rows;
-    });
-};
-
 exports.getArticlesData = () => {
   return Promise.all([
     db.query("SELECT article_id FROM comments"),
@@ -50,5 +39,28 @@ exports.getArticlesData = () => {
       ).length;
     });
     return arrOfArticlesRows;
+  });
+};
+
+exports.getCommentsDataByArticleId = (id) => {
+  return db
+    .query(
+      "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC",
+      [id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
+exports.addCommentToArticle = (id, obj) => {
+  if (Object.keys(obj).length !== 2 || !obj.username || !obj.body) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  } 
+  return this.getArticleDataById(id).then((article) => {
+    return db.query(
+      "INSERT INTO comments (body, author, article_id, votes) VALUES ($1, $2, $3, $4) RETURNING *",
+      [obj.body, obj.username, id, 0]
+    );
   });
 };

@@ -5,6 +5,7 @@ const {
   getArticles,
   getArticlesById,
   getCommentsByArticleId,
+  postCommentByArticleId,
 } = require("./controllers/topics.controller");
 const app = express();
 
@@ -19,6 +20,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticlesById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.post("/api/articles/:article_id/comments", postCommentByArticleId)
 
 //err handling
 app.all("*", (req, res, next) => {
