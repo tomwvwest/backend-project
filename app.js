@@ -4,6 +4,7 @@ const {
   getEndpoints,
   getArticles,
   getArticlesById,
+  getCommentsByArticleId,
 } = require("./controllers/topics.controller");
 const app = express();
 
@@ -17,6 +18,8 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticlesById);
 
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
 //err handling
 app.all("*", (req, res, next) => {
   res.status(404).send({ msg: "Route Not Found" });
@@ -29,7 +32,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(400).send({ msg: "Bad request" });
+  if(err.code) res.status(400).send({ msg: "Bad request" });
 });
 
 module.exports = app;
