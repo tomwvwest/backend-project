@@ -64,5 +64,20 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a comment on an article and return sent comment back to client",
+    "queries": [],
+    "reqFormat": "{username: <insert-username>, body: <insert-comment>}",
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 19,
+        "body": "great article",
+        "article_id": 2,
+        "author": "icellusedkars",
+        "votes": 0,
+        "created_at": "2023-11-23T14:31:28.842Z"
+      }
+    }
   }
 }
