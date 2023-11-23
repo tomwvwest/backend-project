@@ -1,8 +1,20 @@
+const db = require("../db/connection");
+const seed = require("../db/seeds/seed");
+const data = require("../db/data/test-data/index");
 const {
   convertTimestampToDate,
   createRef,
   formatComments,
+  checkExists,
 } = require("../db/seeds/utils");
+
+beforeEach(() => {
+  return seed(data);
+});
+
+afterAll(() => {
+  db.end();
+});
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -102,9 +114,3 @@ describe("formatComments", () => {
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
   });
 });
-
-describe("checkExists", () => {
-  test("", () => {
-    
-  })
-})

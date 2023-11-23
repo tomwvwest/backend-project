@@ -1,4 +1,4 @@
-const { checkArticleExists } = require("../db/seeds/utils");
+const { checkArticleExists, checkExists } = require("../db/seeds/utils");
 const {
   getTopicsData,
   getEndpointsData,
@@ -29,8 +29,15 @@ exports.getArticlesById = (req, res, next) => {
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const id = req.params.article_id;
-  getCommentsDataByArticleId(id)
-    .then((comments) => {
+  const articlePromises = [
+    getCommentsDataByArticleId(id),
+    checkExists("articles", "article_id", id),
+  ];
+
+  Promise.all(articlePromises)
+    .then((results) => {
+      let comments = results[0]
+      if(!results[0] && results[1]) comments = [];
       res.status(200).send({ comments });
     })
     .catch(next);

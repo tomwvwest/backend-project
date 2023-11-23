@@ -29,7 +29,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(400).send({ msg: "Bad request" });
+  if(err.code) res.status(400).send({ msg: "Bad request" });
 });
 
 module.exports = app;

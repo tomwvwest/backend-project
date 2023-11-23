@@ -31,6 +31,5 @@ exports.getCommentsDataByArticleId = (id) => {
     )
     .then((result) => {
       if (result.rows.length > 0) return result.rows;
-      return checkExists("articles", "article_id", id);
     });
 };
