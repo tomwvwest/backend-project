@@ -61,6 +61,7 @@ describe("GET /api", () => {
       .then((response) => {
         const apis = response.body.apis;
         expect(typeof JSON.parse(apis)).toBe("object");
+        expect(typeof JSON.parse(apis)).toBe("object");
       });
   });
   test("each value in parent object is a nested object containing the correct keys and value data types", () => {
@@ -103,7 +104,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .then((response) => {
         const article = response.body.article;
-        const dateCreatedtoLocalTime = new Date(1594329060000 - 60 * 60 * 1000);
+        const dateCreatedtoLocalTime = new Date(1594329060000 - (60*60*1000));
 
         expect(article.created_at).toBe(dateCreatedtoLocalTime.toISOString());
         expect(article.article_id).toBe(1);
@@ -131,6 +132,53 @@ describe("GET /api/articles/:article_id", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("GET /api/articles", () => {
+  test("200: responds with status code 200", () => {
+    return request(app).get("/api/articles").expect(200);
+  });
+  test("returns an array of correct length filled with article objects with correct properties to the client", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles.length).toBe(13);
+        articles.forEach((item) => {
+          expect(typeof item.author).toBe("string");
+          expect(typeof item.title).toBe("string");
+          expect(typeof item.article_id).toBe("number");
+          expect(typeof item.topic).toBe("string");
+          expect(typeof item.created_at).toBe("string");
+          expect(typeof item.votes).toBe("number");
+          expect(typeof item.article_img_url).toBe("string");
+          expect(typeof item.comment_count).toBe("number");
+        });
+      });
+  });
+  test("objects are sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        const articles = body.articles;
+        const sortedArticles = [...articles].sort((a, b) => {
+          const aTimestamp = new Date(a.created_at).getTime();
+          const bTimestamp = new Date(b.created_at).getTime();
+          return bTimestamp - aTimestamp;
+        });
+        expect(articles).toEqual(sortedArticles);
+      });
+  });
+  test("no object in array carry the body property", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        const articles = body.articles;
+        articles.forEach((obj) => {
+          expect(obj).not.toHaveProperty("body");
+        });
       });
   });
 });
