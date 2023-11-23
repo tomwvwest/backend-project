@@ -53,14 +53,14 @@ exports.getCommentsDataByArticleId = (id) => {
     });
 };
 
-exports.addCommentToArticle = (id, { username, body }) => {
-  if (typeof username !== "string" || typeof body !== "string") {
+exports.addCommentToArticle = (id, obj) => {
+  if (Object.keys(obj).length !== 2 || !obj.username || !obj.body) {
     return Promise.reject({ status: 400, msg: "Bad request" });
-  }
+  } 
   return this.getArticleDataById(id).then((article) => {
     return db.query(
       "INSERT INTO comments (body, author, article_id, votes) VALUES ($1, $2, $3, $4) RETURNING *",
-      [body, article.author, id, 0]
+      [obj.body, obj.username, id, 0]
     );
   });
 };

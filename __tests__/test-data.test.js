@@ -249,7 +249,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         const comment = body.comment;
         expect(comment.comment_id).toBe(19);
         expect(comment.article_id).toBe(2);
-        expect(comment.author).toBe("icellusedkars");
+        expect(comment.author).toBe("butter_bridge");
         expect(comment.body).toBe("great article");
         expect(
           /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(
@@ -299,8 +299,8 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
-  test("400: responds with status 400 and appropriate message when given only a comment", () => {
-    const newComment = { body: "great article" };
+  test("400: responds with status 400 and appropriate message when given a body containnig more than a username and comment", () => {
+    const newComment = { username: 'butter_bridge', body: "great article", hello: 'yes' };
     return request(app)
       .post("/api/articles/2/comments")
       .send(newComment)
