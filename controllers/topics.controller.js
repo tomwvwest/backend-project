@@ -36,8 +36,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
   Promise.all(articlePromises)
     .then((results) => {
-      let comments = results[0]
-      if(!results[0] && results[1]) comments = [];
+      const comments = results[0]
       res.status(200).send({ comments });
     })
     .catch(next);

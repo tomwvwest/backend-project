@@ -8,14 +8,6 @@ const {
   checkExists,
 } = require("../db/seeds/utils");
 
-beforeEach(() => {
-  return seed(data);
-});
-
-afterAll(() => {
-  db.end();
-});
-
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
     const timestamp = 1557572706232;

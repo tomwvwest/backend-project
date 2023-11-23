@@ -29,7 +29,7 @@ exports.getCommentsDataByArticleId = (id) => {
       "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC",
       [id]
     )
-    .then((result) => {
-      if (result.rows.length > 0) return result.rows;
+    .then(({rows}) => {
+      return rows;
     });
 };

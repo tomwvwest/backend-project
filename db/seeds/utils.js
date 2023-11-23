@@ -31,6 +31,5 @@ exports.checkExists = (table, column, value) => {
     if (!rows.length) {
       return Promise.reject({status: 404, msg: `Could not find in ${table}`});
     }
-    return true
   })
 };
