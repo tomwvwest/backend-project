@@ -62,7 +62,7 @@ exports.postCommentByArticleId = (req, res, next) => {
 
 exports.patchArticleById = (req, res, next) => {
   const id = req.params.article_id;
-  patchArticle(id, req.body).then(article => {
-    res.status(200).send({article})
+  patchArticle(id, req.body).then(({rows}) => {
+    res.status(200).send({article: rows[0]})
   }).catch(next)
 };

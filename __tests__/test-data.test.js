@@ -340,7 +340,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(article.votes).toBe(110);
       });
   });
-  test.only("404: responds with status 404 and appropriate message when given a valid but non-existent id", () => {
+  test("404: responds with status 404 and appropriate message when given a valid but non-existent id", () => {
     const patchObj = { inc_votes: 10 };
     return request(app)
       .patch("/api/articles/1000")
