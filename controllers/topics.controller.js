@@ -6,6 +6,7 @@ const {
   getArticleDataById,
   getCommentsDataByArticleId,
   addCommentToArticle,
+  patchArticle,
 } = require("../models/topics.model");
 
 exports.getEndpoints = (req, res, next) => {
@@ -53,8 +54,15 @@ exports.postCommentByArticleId = (req, res, next) => {
   const id = req.params.article_id;
   addCommentToArticle(id, req.body)
     .then(({ rows }) => {
-      const comment = rows[0]
+      const comment = rows[0];
       res.status(201).send({ comment });
     })
     .catch(next);
+};
+
+exports.patchArticleById = (req, res, next) => {
+  const id = req.params.article_id;
+  patchArticle(id, req.body).then(article => {
+    res.status(200).send({article})
+  }).catch(next)
 };
