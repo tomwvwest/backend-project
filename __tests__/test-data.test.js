@@ -321,9 +321,10 @@ describe("DELETE /api/comments/:comment_id", () => {
       .delete("/api/comments/1")
       .expect(204)
       .then(() => {
-        return db.query('SELECT * FROM comments').then(({rows}) => {
-          expect(rows.find(obj => obj.comment_id === 1)).toBe(undefined)
-        })
+        return db.query("SELECT * FROM comments");
+      })
+      .then(({ rows }) => {
+        expect(rows.find((obj) => obj.comment_id === 1)).toBe(undefined);
       });
   });
   test("404: responds with status 404 and appropriate message when given a valid but non-existent id ", () => {
@@ -331,7 +332,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .delete("/api/comments/1000")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("comment does not exist")
+        expect(response.body.msg).toBe("comment does not exist");
       });
   });
   test("400: responds with status 400 and appropriate message when given an invalid id", () => {
@@ -339,7 +340,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .delete("/api/comments/invalid_id")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("Bad request")
+        expect(response.body.msg).toBe("Bad request");
       });
-});
+  });
 });
