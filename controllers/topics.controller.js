@@ -8,6 +8,7 @@ const {
   addCommentToArticle,
   patchArticle,
   deleteCommentData,
+  getUsersData,
 } = require("../models/topics.model");
 
 exports.getEndpoints = (req, res, next) => {
@@ -79,5 +80,11 @@ exports.deleteCommentById = (req,res,next) => {
   const id = req.params.comment_id;
   deleteCommentData(id).then(() => {
     res.status(204).send()
+  }).catch(next)
+}
+
+exports.getUsers = (req,res,next) => {
+  getUsersData().then(users => {
+    res.status(200).send({users})
   }).catch(next)
 }
