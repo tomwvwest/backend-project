@@ -3,7 +3,7 @@
 Hosted App: https://its-the-news-2.onrender.com
 
 ## Project Summary 
-This project is planning to be a basic news app, containing articles for the user to browse and interact with. Features include being able to post comments on certain articles, increment a vote count for each article and search for articles by topic. 
+This project is an API allowing a user access to news articles, current users and comments data to browse and interact with. Features include being able to post comments on certain articles, increment a vote count for each article and search for articles by topic. 
 
 ## Setup
 
@@ -23,10 +23,10 @@ To create the databases, use ```npm install``` in the terminal followed by ```np
 
 Use ```npm run seed``` and ```npm run test``` to insert data into the development or test tables respectively. The latter also completes the running of all test files.
 
-Dependencies to install with their minimum versions to run:
-- express (4.18.2)
-- dotenv (16.0.0)
-- pg (8.7.3)
-- pg-format (1.0.4)
+Minimum versions needed to run:
 
-Install by running ```npm install <dependency-name>``` for each dependency
+- express (4.18.2)
+- PSQL (16.0)
+- Node ()
+
+Install all dependencies by running ```npm i```
