@@ -181,6 +181,14 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("200: returns array of article objects that are filtered by topic query when given a valid topic name", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .then(({ body }) => {
+        const articles = body.articles;
+        
+      });
+  })
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
@@ -437,3 +445,4 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
