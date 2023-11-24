@@ -24,10 +24,20 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  getArticlesData().then((data) => {
-    res.status(200).send({ articles: data });
-  });
+  const topicQuery = req.query.topic;
+  const articlePromises = [getArticlesData(topicQuery)];
+
+  if (topicQuery) {
+    articlePromises.push(checkExists("topics", "slug", topicQuery));
+  }
+
+  Promise.all(articlePromises)
+    .then((results) => {
+      res.status(200).send({ articles: results[0] });
+    })
+    .catch(next);
 };
+
 exports.getArticlesById = (req, res, next) => {
   const id = req.params.article_id;
   getArticleDataById(id)
@@ -64,19 +74,23 @@ exports.postCommentByArticleId = (req, res, next) => {
 
 exports.patchArticleById = (req, res, next) => {
   const id = req.params.article_id;
-  patchArticle(id, req.body).then(({rows}) => {
-    res.status(200).send({article: rows[0]})
-  }).catch(next)
+  patchArticle(id, req.body)
+    .then(({ rows }) => {
+      res.status(200).send({ article: rows[0] });
+    })
+    .catch(next);
 };
 
 exports.patchArticleById = (req, res, next) => {
   const id = req.params.article_id;
-  patchArticle(id, req.body).then(({rows}) => {
-    res.status(200).send({article: rows[0]})
-  }).catch(next)
+  patchArticle(id, req.body)
+    .then(({ rows }) => {
+      res.status(200).send({ article: rows[0] });
+    })
+    .catch(next);
 };
 
-exports.deleteCommentById = (req,res,next) => {
+exports.deleteCommentById = (req, res, next) => {
   const id = req.params.comment_id;
   deleteCommentData(id).then(() => {
     res.status(204).send()

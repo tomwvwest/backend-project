@@ -181,6 +181,40 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("200: returns array of article objects that are filtered by topic query when given a valid topic name", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles.length).toBe(12);
+        articles.forEach(article => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(article.topic).toBe("mitch");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+        })
+      });
+  })
+  test('200: returns empty array if topic query given is valid but no article has it', () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toEqual([]);
+      });
+  })
+  test('404: responds with status 404 and appropriate message when given a an invalid topic query', () => {
+    return request(app)
+      .get("/api/articles?topic=invalidTopic")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Could not find in topics");
+      });
+  })
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
@@ -437,6 +471,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
 
 describe('GET /api/users', () => {
   test('200: returns an array of user objects containing the correct properties', () => {
