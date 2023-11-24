@@ -23,10 +23,17 @@ exports.getArticleDataById = (id) => {
     });
 };
 
-exports.getArticlesData = () => {
+exports.getArticlesData = (topic) => {
+  let articlePromise = topic
+    ? db.query(
+        "SELECT * FROM articles WHERE topic = $1 ORDER BY created_at DESC",
+        [topic]
+      )
+    : db.query("SELECT * FROM articles ORDER BY created_at DESC");
+
   return Promise.all([
     db.query("SELECT article_id FROM comments"),
-    db.query("SELECT * FROM articles ORDER BY created_at DESC"),
+    articlePromise,
   ]).then(([arrOfArticleAppearances, arrOfArticles]) => {
     const formattedArticleAppearances = arrOfArticleAppearances.rows.map(
       (obj) => obj.article_id
@@ -66,12 +73,15 @@ exports.addCommentToArticle = (id, obj) => {
 };
 
 exports.patchArticle = (id, body) => {
-  if(Object.keys(body).length !==1){
+  if (Object.keys(body).length !== 1) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
   return this.getArticleDataById(id).then((result) => {
     result.votes += body.inc_votes;
-    return db.query('UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *', [result.votes, id])
+    return db.query(
+      "UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *",
+      [result.votes, id]
+    );
   });
 };
 
@@ -79,6 +89,7 @@ exports.deleteCommentData = (id) => {
   return db
     .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *", [id])
     .then((result) => {
-      if (!result.rows[0]) return Promise.reject({ status: 404, msg: "comment does not exist" });
+      if (!result.rows[0])
+        return Promise.reject({ status: 404, msg: "comment does not exist" });
     });
 };
