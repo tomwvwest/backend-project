@@ -56,11 +56,19 @@ exports.getCommentsDataByArticleId = (id) => {
 exports.addCommentToArticle = (id, obj) => {
   if (Object.keys(obj).length !== 2 || !obj.username || !obj.body) {
     return Promise.reject({ status: 400, msg: "Bad request" });
-  } 
+  }
   return this.getArticleDataById(id).then((article) => {
     return db.query(
       "INSERT INTO comments (body, author, article_id, votes) VALUES ($1, $2, $3, $4) RETURNING *",
       [obj.body, obj.username, id, 0]
     );
   });
+};
+
+exports.deleteCommentData = (id) => {
+  return db
+    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *", [id])
+    .then((result) => {
+      if (!result.rows[0]) return Promise.reject({ status: 404, msg: "comment does not exist" });
+    });
 };
