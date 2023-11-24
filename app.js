@@ -6,6 +6,7 @@ const {
   getArticlesById,
   getCommentsByArticleId,
   postCommentByArticleId,
+  patchArticleById,
   deleteCommentById,
 } = require("./controllers/topics.controller");
 const app = express();
@@ -23,6 +24,8 @@ app.get("/api/articles/:article_id", getArticlesById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
+app.patch("/api/articles/:article_id", patchArticleById);;
 
 app.delete("/api/comments/:comment_id", deleteCommentById)
 

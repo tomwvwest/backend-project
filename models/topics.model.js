@@ -65,6 +65,16 @@ exports.addCommentToArticle = (id, obj) => {
   });
 };
 
+exports.patchArticle = (id, body) => {
+  if(Object.keys(body).length !==1){
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  return this.getArticleDataById(id).then((result) => {
+    result.votes += body.inc_votes;
+    return db.query('UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *', [result.votes, id])
+  });
+};
+
 exports.deleteCommentData = (id) => {
   return db
     .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *", [id])
