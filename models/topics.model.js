@@ -15,10 +15,19 @@ exports.getTopicsData = () => {
 };
 
 exports.getArticleDataById = (id) => {
-  return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [id])
-    .then((result) => {
-      if (result.rows[0]) return result.rows[0];
+  return Promise.all([db
+    .query("SELECT * FROM articles WHERE article_id = $1", [id]), db.query("SELECT article_id FROM comments")]) 
+    .then(([articleResult, commentResult]) => {
+      if (articleResult.rows[0]) {
+        const article = articleResult.rows[0];
+        const formattedArticleAppearances = commentResult.rows.map(
+          (obj) => obj.article_id
+        );
+
+        article.comment_count = formattedArticleAppearances.filter((num) => num === 1).length;
+
+        return article
+      }
       return Promise.reject({ status: 404, msg: "article does not exist" });
     });
 };
