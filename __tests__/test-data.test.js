@@ -300,10 +300,107 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
   test("400: responds with status 400 and appropriate message when given a body containnig more than a username and comment", () => {
-    const newComment = { username: 'butter_bridge', body: "great article", hello: 'yes' };
+    const newComment = {
+      username: "butter_bridge",
+      body: "great article",
+      hello: "yes",
+    };
     return request(app)
       .post("/api/articles/2/comments")
       .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: patches vote count on specific article and returns updated article", () => {
+    const patchObj = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(patchObj)
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.article;
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.article_id).toBe(1);
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("butter_bridge");
+        expect(article.body).toBe("I find this existence challenging");
+        expect(
+          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(
+            article.created_at
+          )
+        ).toBe(true);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+        expect(article.votes).toBe(110);
+      });
+  });
+  test("404: responds with status 404 and appropriate message when given a valid but non-existent id", () => {
+    const patchObj = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/1000")
+      .send(patchObj)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("article does not exist");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given an invalid id", () => {
+    return request(app)
+      .patch("/api/articles/invalid_id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given empty body", () => {
+    const patchObj = {};
+    return request(app)
+      .patch("/api/articles/2")
+      .send(patchObj)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given a body with too many keys", () => {
+    const patchObj = {
+      inc_votes: 10,
+      body: "great article",
+      hello: "yes",
+    };
+    return request(app)
+      .patch("/api/articles/2")
+      .send(patchObj)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given a non-integer to increment votes by", () => {
+    const patchObj = {
+      inc_votes: "ten",
+    };
+    return request(app)
+      .patch("/api/articles/2")
+      .send(patchObj)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("400: responds with status 400 and appropriate message when given a a body with no inc_votes key", () => {
+    const patchObj = {
+      invalidKey: 10,
+    };
+    return request(app)
+      .patch("/api/articles/2")
+      .send(patchObj)
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
