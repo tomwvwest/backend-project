@@ -3,7 +3,7 @@ const ENV = process.env.NODE_ENV || 'development';
 const config = {};
 
 if (ENV === 'production') {
-  config.connectionString = process.env.DATABASE_URL;
+  config.connectionString = 'postgres://kakhijsh:7MRv93TBKqgVoGn3NLd-uWrJKHG7y4l6@flora.db.elephantsql.com/kakhijsh'
   config.max = 2;
 }
 
