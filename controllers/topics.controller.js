@@ -7,6 +7,7 @@ const {
   getCommentsDataByArticleId,
   addCommentToArticle,
   patchArticle,
+  deleteCommentData,
 } = require("../models/topics.model");
 
 exports.getEndpoints = (req, res, next) => {
@@ -66,3 +67,17 @@ exports.patchArticleById = (req, res, next) => {
     res.status(200).send({article: rows[0]})
   }).catch(next)
 };
+
+exports.patchArticleById = (req, res, next) => {
+  const id = req.params.article_id;
+  patchArticle(id, req.body).then(({rows}) => {
+    res.status(200).send({article: rows[0]})
+  }).catch(next)
+};
+
+exports.deleteCommentById = (req,res,next) => {
+  const id = req.params.comment_id;
+  deleteCommentData(id).then(() => {
+    res.status(204).send()
+  }).catch(next)
+}
