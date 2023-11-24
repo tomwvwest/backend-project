@@ -8,6 +8,7 @@ const {
   postCommentByArticleId,
   patchArticleById,
   deleteCommentById,
+  getUsers,
 } = require("./controllers/topics.controller");
 const app = express();
 
@@ -25,10 +26,11 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
-app.patch("/api/articles/:article_id", patchArticleById);;
+app.patch("/api/articles/:article_id", patchArticleById);
 
-app.delete("/api/comments/:comment_id", deleteCommentById)
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
+app.get("/api/users", getUsers)
 //err handling
 app.all("*", (req, res, next) => {
   res.status(404).send({ msg: "Route Not Found" });
@@ -41,7 +43,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  if(err.code) res.status(400).send({ msg: "Bad request" });
+  if (err.code) res.status(400).send({ msg: "Bad request" });
 });
 
 module.exports = app;

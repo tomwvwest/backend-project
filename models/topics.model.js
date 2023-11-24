@@ -93,3 +93,9 @@ exports.deleteCommentData = (id) => {
         return Promise.reject({ status: 404, msg: "comment does not exist" });
     });
 };
+
+exports.getUsersData = () => {
+  return db.query('SELECT * FROM users').then(({rows}) => {
+    return rows
+  })
+}
