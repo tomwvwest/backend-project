@@ -10,6 +10,7 @@ const {
   deleteCommentById,
   getUsers,
 } = require("./controllers/topics.controller");
+const cors = require('cors');
 const app = express();
 
 app.use(express.json());
@@ -32,6 +33,7 @@ app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.get("/api/users", getUsers)
 //err handling
+app.use(cors());
 app.all("*", (req, res, next) => {
   res.status(404).send({ msg: "Route Not Found" });
   next();
