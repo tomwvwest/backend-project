@@ -13,6 +13,8 @@ const {
 const cors = require('cors');
 const app = express();
 
+app.use(cors());
+
 app.use(express.json());
 
 app.get("/api", getEndpoints);
@@ -33,7 +35,6 @@ app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.get("/api/users", getUsers)
 //err handling
-app.use(cors());
 app.all("*", (req, res, next) => {
   res.status(404).send({ msg: "Route Not Found" });
   next();
